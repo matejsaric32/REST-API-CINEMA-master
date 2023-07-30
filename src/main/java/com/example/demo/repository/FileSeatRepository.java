@@ -1,8 +1,8 @@
 package com.example.demo.repository;
 
+import com.example.demo.configuration.Config;
 import com.example.demo.domain.Seat;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.io.BufferedWriter;
@@ -17,13 +17,20 @@ import java.util.stream.Collectors;
 
 @Repository
 public class FileSeatRepository implements SeatRepository {
+
+    @Autowired
+    private Config configuration;
+
     private static final Integer NUMBER_OF_SEAT_ROWS = 3;
-    private static final String SEATS_FILE_LOCATION = "dat/seats.txt";
+
+    private String SEATS_FILE_LOCATION = "dat/seats.txt";
 
     @Override
     public List<Seat> getAllSeats() {
+
+        System.out.println(configuration.getSeat_file_path());
         List<Seat> seatList = new ArrayList<>();
-        Path seatsFilePath = Path.of(SEATS_FILE_LOCATION);
+        Path seatsFilePath = Path.of(configuration.getSeat_file_path());
 
         List<String> lines = null;
         try {
@@ -63,7 +70,7 @@ public class FileSeatRepository implements SeatRepository {
         saveAllSeatsToFile(allSeats);
     }
 
-    private static void saveAllSeatsToFile(List<Seat> allSeats) {
+    private void saveAllSeatsToFile(List<Seat> allSeats) {
         Path seatsFilePath = Path.of(SEATS_FILE_LOCATION);
 
         try(BufferedWriter bw = new BufferedWriter(new FileWriter(seatsFilePath.toFile(), false))) {
